@@ -15,6 +15,7 @@ class my_node(Node):
         while client_obj.wait_for_service(0.5)==False:
             self.get_logger().warn('wait for server')
         req=SetBool.Request()
+        req.data=data
         future_obj=client_obj.call_async(req)
         #future_obj.add_done_callback(self.futur_call)
 
