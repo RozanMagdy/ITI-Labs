@@ -36,7 +36,7 @@ class my_node(Node):
         imu_msg=Imu()
         imu_msg.header.frame_id= "zed2_imu_link"
         imu_msg.header.stamp= self.get_clock().now().to_msg()
-        X,Y,Z,W = quaternion_from_euler(0, 0,self.yaw_list[self.index])
+        X,Y,Z,W = quaternion_from_euler(0, 0,(self.yaw_list[self.index]*(pi/180)))
         imu_msg.orientation.w = W
         imu_msg.orientation.x = X
         imu_msg.orientation.y = Y
