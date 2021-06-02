@@ -2,6 +2,7 @@
 import  rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Path
+from example_interfaces.msg import String
 import math 
 
 def menger_curvature( point_1_x, point_1_y, point_2_x, point_2_y, point_3_x, point_3_y):
@@ -12,9 +13,12 @@ def menger_curvature( point_1_x, point_1_y, point_2_x, point_2_y, point_3_x, poi
 
 class my_node(Node):
     def __init__(self):
+        self.curvaturemsg=""
         super().__init__("Sub_node")
         self.get_logger().info("Sub node is Started")
         self.create_subscription(Path,"plan",self.timer_call_sub,10)
+        self.create_timer(2,self.timer_call_pub_one)
+        self.obj_pub_one=self.create_publisher(String,"curvature_topic",10)
         
         
 
@@ -22,18 +26,25 @@ class my_node(Node):
         poses_size= len(msg_path.poses)
         point_1_x = msg_path.poses[0].pose.position.x
         point_1_y = msg_path.poses[0].pose.position.y
-        point_2_x = msg_path.poses[int(poses_size/3)].pose.position.x
-        point_2_y = msg_path.poses[int(poses_size/3)].pose.position.y
-        point_3_x = msg_path.poses[int(poses_size/2)].pose.position.x
-        point_3_y = msg_path.poses[int(poses_size/2)].pose.position.y
+        point_2_x = msg_path.poses[int(poses_size/6)].pose.position.x
+        point_2_y = msg_path.poses[int(poses_size/6)].pose.position.y
+        point_3_x = msg_path.poses[int(poses_size/3)].pose.position.x
+        point_3_y = msg_path.poses[int(poses_size/3)].pose.position.y
         curvature = menger_curvature( point_1_x, point_1_y, point_2_x, point_2_y, point_3_x, point_3_y)
 
-        if (curvature >= (0.02)):  ## radiuas > 50 is considers as stright line  then C < (1/50) is straight line 
+        if (curvature >= (0.8)):  ## radiuas > 50 is considers as stright line  then C < (1/50) is straight line 
             self.get_logger().info("The robot is turning with a curvature "+ str(curvature))
+            self.curvaturemsg="The robot is turning with a curvature "+ str(curvature)
         else:
              self.get_logger().info("The path is straight")
-        
+             self.curvaturemsg="The path is straight"
 
+
+    def timer_call_pub_one(self):
+        msg_curvature=String()
+        msg_curvature.data= self.curvaturemsg
+        self.obj_pub_one.publish(msg_curvature)
+        
     
 def main (args=None):
     rclpy.init(args=args)
