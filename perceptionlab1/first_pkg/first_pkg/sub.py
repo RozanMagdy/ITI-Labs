@@ -27,11 +27,11 @@ class my_node(Node):
     def scan_cb(self,msg):
         #print(len(msg.ranges))
         regions = {
-        'right':  min(min(msg.ranges[0:72]), 10),
-        'fright': min(min(msg.ranges[73:144]), 10),
-        'front':  min(min(msg.ranges[145:216]), 10),
-        'fleft':  min(min(msg.ranges[217:288]), 10),
-        'left':   min(min(msg.ranges[289:359]), 10),
+        'right':  min(min(msg.ranges[110:183]), 10),
+        'fright': min(min(msg.ranges[37:109]), 10),
+        'front':  min(min(min(msg.ranges[0:36]),min(msg.ranges[323:359])), 10),
+        'fleft':  min(min(msg.ranges[250:322]), 10),
+        'left':   min(min(msg.ranges[179:249]), 10),
         }
 
         self.take_action(regions)
@@ -44,7 +44,7 @@ class my_node(Node):
         elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] > 1:
             state_description = 'case 2 - front'
             self.linear_x = 0.0
-            self.angular_z = -0.3
+            self.angular_z = -0.5
         elif regions['front'] > 1 and regions['fleft'] > 1 and regions['fright'] < 1:
             state_description = 'case 3 - fright'           
         elif regions['front'] > 1 and regions['fleft'] < 1 and regions['fright'] > 1:
@@ -52,15 +52,15 @@ class my_node(Node):
         elif regions['front'] < 1 and regions['fleft'] > 1 and regions['fright'] < 1:
             state_description = 'case 5 - front and fright'
             self.linear_x = 0.0
-            self.angular_z = -0.3
+            self.angular_z = -0.5
         elif regions['front'] < 1 and regions['fleft'] < 1 and regions['fright'] > 1:
             state_description = 'case 6 - front and fleft'
             self.linear_x = 0.0
-            self.angular_z = 0.3
+            self.angular_z = 0.5
         elif regions['front'] < 1 and regions['fleft'] < 1 and regions['fright'] < 1:
             state_description = 'case 7 - front and fleft and fright'
             self.linear_x = 0.0
-            self.angular_z = -0.3
+            self.angular_z = -0.5
         elif regions['front'] > 1 and regions['fleft'] < 1 and regions['fright'] < 1:
             state_description = 'case 8 - fleft and fright'    
 
