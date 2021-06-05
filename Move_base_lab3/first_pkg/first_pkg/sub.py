@@ -55,10 +55,10 @@ class my_node(Node):
             poses_size= len(msg_path.poses)
             point_1_x = msg_path.poses[0].pose.position.x
             point_1_y = msg_path.poses[0].pose.position.y
-            point_2_x = msg_path.poses[int(poses_size/8)].pose.position.x
-            point_2_y = msg_path.poses[int(poses_size/8)].pose.position.y
-            point_3_x = msg_path.poses[int(poses_size/4)].pose.position.x
-            point_3_y = msg_path.poses[int(poses_size/4)].pose.position.y
+            point_2_x = msg_path.poses[int(poses_size/2)].pose.position.x
+            point_2_y = msg_path.poses[int(poses_size/2)].pose.position.y
+            point_3_x = msg_path.poses[-1].pose.position.x
+            point_3_y = msg_path.poses[-1].pose.position.y
             curvature = menger_curvature( point_1_x, point_1_y, point_2_x, point_2_y, point_3_x, point_3_y)
             _,_, yaw_now = euler_from_quaternion(msg_path.poses[0].pose.orientation)
             _,_, yaw_goal = euler_from_quaternion(msg_path.poses[-1].pose.orientation)
