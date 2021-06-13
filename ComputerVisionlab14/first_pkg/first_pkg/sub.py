@@ -36,29 +36,33 @@ class my_node(Node):
         bf = cv2.BFMatcher(cv2.NORM_L1, crossCheck=True)
         matches = bf.match(descriptors_current, descriptors_last)
         matches = sorted(matches, key = lambda x:x.distance)
-        distances=0
-        average_distance=0
-        for i in range(len(matches)):
-             distances=distances+matches[i].distance
-        try:
-            average_distance=(distances/len(matches))
+        list_kp1 = [keypoints_current[mat.queryIdx].pt for mat in matches] 
+        list_kp2 = [keypoints_last[mat.trainIdx].pt for mat in matches]
+        x1= 0
+        y1=0
+        x2= 0
+        y2=0
+        for i in range(len(list_kp1)):
+            x2+=(int (list_kp1[i][0]) -int (list_kp2[i][0]))
+            y2+=(int (list_kp1[i][1]) -int (list_kp2[i][1]))
+
+        try: 
+            x2/=len(list_kp1)
+            y2/=len(list_kp1)
         except:
-                self.get_logger().info("zero division")
-        if(average_distance> self.lastavragedistance):
-            self.get_logger().info("robot is movong right")
-        else:
-            self.get_logger().info("robot is movong left")
-        self.get_logger().info(str(average_distance))
-        self.get_logger().info("Done")
+            self.get_logger().info("Zero Divison")
+        
+        #Draw direction
+        start_point = (int (self.cv_image_current.shape[0]/2),int (self.cv_image_current.shape[1]/2) )  
+        end_point = (int (self.cv_image_current.shape[0]/2)+int (x2*5),int (self.cv_image_current.shape[1]/2)+int (y2*5)) 
+        image = cv2.arrowedLine(self.cv_image_current, start_point, end_point,(0,255,0), 4)
         end = timeit.timeit()
         self.get_logger().info("Detection time "+ str(end - start))
-        img = cv2.drawMatches(self.cv_image_current , keypoints_current, self.cv_image_last, keypoints_last, matches, self.cv_image_last, flags=2)
-        plt.figure(figsize=(25,15))
-        plt.imshow(img)
-        plt.show()
+        cv2.imshow("My_Image", image)
+        if (cv2.waitKey(1) & 0xff) == ord('q'):
+            cv2.destroyAllWindows()  
         self.cv_image_last= self.cv_image_current
-        self.lastavragedistance=average_distance
-        
+
         
         
     
